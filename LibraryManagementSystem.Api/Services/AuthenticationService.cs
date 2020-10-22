@@ -8,7 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace LibraryManagementSystem.Api
+namespace LibraryManagementSystem.Api.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
