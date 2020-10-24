@@ -1,35 +1,29 @@
-﻿using LibraryManagementSystem.Api.DataAccess;
-using LibraryManagementSystem.Api.Interfaces;
-using LibraryManagementSystem.Api.Services;
-using Microsoft.AspNetCore.Hosting;
+﻿using LibraryManagementSystem.Api.Services;
+using LibraryManagementSystem.Core.DataContext;
+using LibraryManagementSystem.Core.Helpers;
+using LibraryManagementSystem.Core.Interfaces;
+using LibraryManagementSystem.Repository.DataRepository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace LibraryManagementSystem.Api.Bootstrapper
 {
     public static class AppBuilder
     {
-        public static IServiceCollection LoadAppConfiguration(this IServiceCollection services, IConfiguration configuration)
-        {
-            var appDirectory = configuration.GetValue<string>(WebHostDefaults.ContentRootKey);
-            var configurationBuilder = new ConfigurationBuilder();
-            var addedConfiguration = configurationBuilder
-                .SetBasePath(appDirectory)
-                .AddJsonFile("Database/Users.json", optional: false, reloadOnChange: true)
-                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
-
-            services.Replace(ServiceDescriptor.Singleton(typeof(IConfiguration), addedConfiguration));
-
-            return services;
-        }
-
-        public static IServiceCollection RegisterCustomAppServices(this IServiceCollection services)
+        public static IServiceCollection RegisterCustomAppServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IUserDataAccess, UserDataAccess>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IBookFacilitator, BookFacilitator>();
+            services.AddScoped<IBookReviewService, BookReviewService>();
+            services.AddDbContext<AppContext>(options =>
+                options.UseSqlServer(
+                    configuration.GetConnectionString("Database:ConnectionString")));
+            services.AddScoped<IDapper, DapperHelper>();
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBookReviewRepository, BookReviewRepository>();
 
             return services;
         }

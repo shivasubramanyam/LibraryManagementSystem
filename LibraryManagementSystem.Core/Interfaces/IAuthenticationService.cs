@@ -1,6 +1,7 @@
-﻿using LibraryManagementSystem.Api.Models;
+﻿using LibraryManagementSystem.Core.Models;
+using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Api.Interfaces
+namespace LibraryManagementSystem.Core.Interfaces
 {
     public interface IAuthenticationService
     {
@@ -9,6 +10,6 @@ namespace LibraryManagementSystem.Api.Interfaces
         /// </summary>
         /// <param name="authRequest">The user authentication data</param>
         /// <returns>Null/Token if credentials are valid</returns>
-        string AuthenticateUser(UserAuthRequest authRequest);
+        Task<string> AuthenticateUserAsync(UserAuthRequest authRequest);
     }
 }

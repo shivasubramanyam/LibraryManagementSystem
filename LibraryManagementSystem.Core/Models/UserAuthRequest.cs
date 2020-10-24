@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace LibraryManagementSystem.Api.Models
+namespace LibraryManagementSystem.Core.Models
 {
     public class UserAuthRequest
     {

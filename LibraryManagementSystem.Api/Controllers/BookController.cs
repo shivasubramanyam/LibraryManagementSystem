@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LibraryManagementSystem.Api.CustomAttributes;
+using LibraryManagementSystem.Core.Constants;
+using LibraryManagementSystem.Core.Entities;
+using LibraryManagementSystem.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using LibraryManagementSystem.Api.Constants;
-using LibraryManagementSystem.Api.CustomAttributes;
-using LibraryManagementSystem.Api.Interfaces;
-using LibraryManagementSystem.Api.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagementSystem.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookController : ControllerBase
+    public class BookController : BaseController
     {
         private readonly IBookService _bookService;
         public BookController(IBookService bookService)
@@ -24,9 +21,9 @@ namespace LibraryManagementSystem.Api.Controllers
 
         [HttpGet]
         [AuthorizeRoles(Role.Admin, Role.User)]
-        public IActionResult ListAllBooks()
+        public async Task<IActionResult> ListAllBooksAsync()
         {
-            var books = _bookService.GetAllBooks();
+            var books = await _bookService.GetAllBooksAsync();
             if (books != null && books.Any())
                 return Ok(books);
 
@@ -35,31 +32,31 @@ namespace LibraryManagementSystem.Api.Controllers
 
         [HttpPost]
         [Authorize(Roles = Role.Admin)]
-        public IActionResult AddNewBook(Book book)
+        public async Task<IActionResult> AddNewBookAsync(Book book)
         {
-            var isBookAdded = _bookService.AddBook(book);
+            var isBookAdded = await _bookService.AddBookAsync(book);
             if (isBookAdded)
-                return CreatedAtAction(nameof(AddNewBook), book);
+                return Created(nameof(AddNewBookAsync), book);
 
             return BadRequest("Failed to add book to the store");
         }
 
         [HttpPut]
         [Authorize(Roles = Role.Admin)]
-        public IActionResult UpdateBook(Book book)
+        public async Task<IActionResult> UpdateBookAsync(Book book)
         {
-            var isBookUpdated = _bookService.UpdateBook(book);
+            var isBookUpdated = await _bookService.UpdateBookAsync(book);
             if (isBookUpdated)
                 return Ok("Book details were updated successfully to the store");
 
             return BadRequest("Failed to update book details to the store");
         }
 
-        [HttpPut]
+        [HttpDelete]
         [Authorize(Roles = Role.Admin)]
-        public IActionResult DeleteBook(int bookId)
+        public async Task<IActionResult> DeleteBookAsync(int bookId)
         {
-            var isBookDeleted = _bookService.DeleteBookById(bookId);
+            var isBookDeleted = await _bookService.DeleteBookByIdAsync(bookId);
             if (isBookDeleted)
                 return Ok($"Book with id '{bookId}' has been deleted");
 

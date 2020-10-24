@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace LibraryManagementSystem.Api.Models
+namespace LibraryManagementSystem.Core.Entities
 {
     public class User
     {
@@ -17,9 +17,22 @@ namespace LibraryManagementSystem.Api.Models
         public string Password { get; set; }
 
         [JsonPropertyName("userRole")]
-        public string UserRole { get; set; }
+        public string RoleType { get; set; }
 
         [JsonPropertyName("isActiveUser")]
-        public bool IsActiveUser { get; set; }
+        public bool IsActive { get; set; }
+
+        //public User GetUserWithoutPassword()
+        //{
+        //    return new User
+        //    {
+        //        UserId = UserId,
+        //        Password = null,
+        //        FullName = FullName,
+        //        UserName = UserName,
+        //        RoleType = RoleType,
+        //        IsActive = IsActive
+        //    };
+        //}
     }
 }

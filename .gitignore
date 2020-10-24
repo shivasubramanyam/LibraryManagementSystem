@@ -5,3 +5,7 @@
 /.vs/LibraryManagementSystem
 /LibraryManagementSystem.Api/bin/Debug/netcoreapp3.1
 /LibraryManagementSystem.Api/obj
+/LibraryManagementSystem.Core/bin/Debug/netcoreapp3.1
+/LibraryManagementSystem.Core/obj
+/LibraryManagementSystem.Repository/bin/Debug/netcoreapp3.1
+/LibraryManagementSystem.Repository/obj

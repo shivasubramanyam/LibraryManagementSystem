@@ -1,5 +1,6 @@
-﻿using LibraryManagementSystem.Api.Interfaces;
-using LibraryManagementSystem.Api.Models;
+﻿using LibraryManagementSystem.Core.Entities;
+using LibraryManagementSystem.Core.Interfaces;
+using LibraryManagementSystem.Core.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -7,30 +8,31 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Api.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IConfiguration _configuration;
-        private readonly IUserDataAccess _userDataAccess;
+        private readonly IUserRepository _userRepository;
 
-        public AuthenticationService(IConfiguration configuration, IUserDataAccess userDataAccess)
+        public AuthenticationService(IConfiguration configuration, IUserRepository userDataAccess)
         {
             _configuration = configuration;
-            _userDataAccess = userDataAccess;
+            _userRepository = userDataAccess;
         }
 
-        public string AuthenticateUser(UserAuthRequest authRequest)
+        public async Task<string> AuthenticateUserAsync(UserAuthRequest authRequest)
         {
-            var user = _userDataAccess.ValidateUserCredentials(authRequest);
+            var user = await _userRepository.ValidateUserCredentialsAsync(authRequest);
             if (user != null)
-                return GenerateJSONWebToken(user);
+                return GenerateJsonWebToken(user);
 
             return null;
         }
 
-        private string GenerateJSONWebToken(User user)
+        private string GenerateJsonWebToken(User user)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -39,9 +41,10 @@ namespace LibraryManagementSystem.Api.Services
                 _configuration["Jwt:Issuer"],
                 new List<Claim>
                 {
+                    new Claim(nameof(user.UserId), user.UserId.ToString()),
                     new Claim(ClaimTypes.Name, user.FullName),
                     new Claim(ClaimTypes.Email, user.UserName),
-                    new Claim(ClaimTypes.Role, user.UserRole)
+                    new Claim(ClaimTypes.Role, user.RoleType)
                 },
                 expires: DateTime.Now.AddMinutes(120),
                 signingCredentials: credentials);

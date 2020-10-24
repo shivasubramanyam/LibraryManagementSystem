@@ -1,7 +1,9 @@
-﻿using LibraryManagementSystem.Api.Interfaces;
-using LibraryManagementSystem.Api.Models;
+﻿using LibraryManagementSystem.Core.Interfaces;
+using LibraryManagementSystem.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Api.Controllers
 {
@@ -19,14 +21,22 @@ namespace LibraryManagementSystem.Api.Controllers
         [AllowAnonymous]
         [Route("")]
         [HttpPost]
-        public IActionResult Login([FromBody] UserAuthRequest userAuthRequest)
+        public async Task<IActionResult> LoginAsync([FromBody] UserAuthRequest userAuthRequest)
         {
             IActionResult response = Unauthorized();
-            var jwtToken = _authenticationService.AuthenticateUser(userAuthRequest);
-            if (string.IsNullOrEmpty(jwtToken))
-                return response;
+            try
+            {
+                var jwtToken = await _authenticationService.AuthenticateUserAsync(userAuthRequest);
+                if (!string.IsNullOrEmpty(jwtToken))
+                    return Ok(new { token = jwtToken });
+            }
+            catch (Exception ex)
+            {
+                //Log exception here
+                return BadRequest("OOPS! Something went wrong while processing your request. Please try again");
+            }
 
-            return Ok(new { token = jwtToken });
+            return response;
         }
     }
 }

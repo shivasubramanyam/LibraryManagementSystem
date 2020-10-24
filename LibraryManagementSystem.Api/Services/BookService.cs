@@ -1,44 +1,37 @@
-﻿using LibraryManagementSystem.Api.Interfaces;
-using LibraryManagementSystem.Api.Models;
-using System;
+﻿using LibraryManagementSystem.Core.Entities;
+using LibraryManagementSystem.Core.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Api.Services
 {
     public class BookService : IBookService
     {
-        private readonly IBookDataStore _bookDataStore;
+        private readonly IBookRepository _bookDataStore;
 
-        public BookService(IBookDataStore bookDataStore)
+        public BookService(IBookRepository bookDataStore)
         {
             _bookDataStore = bookDataStore;
         }
 
-        public bool AddBook(Book book)
+        public async Task<IEnumerable<Book>> GetAllBooksAsync()
         {
-            return _bookDataStore.AddBook(book);
+            return await _bookDataStore.RetrieveAllBooksAsync();
         }
 
-        public bool AddBookToFavorites(int bookId)
+        public async Task<bool> AddBookAsync(Book book)
         {
-            return _bookDataStore.AddToFavorites(bookId);
+            return await _bookDataStore.AddBookAsync(book);
         }
 
-        public bool DeleteBookById(int bookId)
+        public async Task<bool> UpdateBookAsync(Book book)
         {
-            return _bookDataStore.DeleteBook(bookId);
+            return await _bookDataStore.UpdateBookAsync(book);
         }
 
-        public IEnumerable<Book> GetAllBooks()
+        public async Task<bool> DeleteBookByIdAsync(int bookId)
         {
-            return _bookDataStore.RetrieveAllBooks();
-        }
-
-        public bool UpdateBook(Book book)
-        {
-            return _bookDataStore.UpdateBook(book);
+            return await _bookDataStore.DeleteBookAsync(bookId);
         }
     }
 }

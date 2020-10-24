@@ -23,8 +23,7 @@ namespace LibraryManagementSystem.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.LoadAppConfiguration(Configuration);
-            services.RegisterCustomAppServices();
+            services.RegisterCustomAppServices(Configuration);
 
             services.AddAuthentication(x =>
                 {
@@ -45,6 +44,7 @@ namespace LibraryManagementSystem.Api
                         ValidAudience = Configuration["Jwt:Issuer"]
                     };
                 });
+            services.AddMvc(o => o.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +66,7 @@ namespace LibraryManagementSystem.Api
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMvc();
 
             app.UseEndpoints(endpoints =>
             {

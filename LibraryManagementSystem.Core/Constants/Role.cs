@@ -1,4 +1,4 @@
-﻿namespace LibraryManagementSystem.Api.Constants
+﻿namespace LibraryManagementSystem.Core.Constants
 {
     public static class Role
     {
